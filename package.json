@@ -1,0 +1,13 @@
+{
+  "name": "marshanda",
+  "version": "1.0.0",
+  "description": "> AI-powered real-time customer feedback analytics with Gemini AI sentiment analysis, business insights, and a modern SaaS dashboard.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs"
+}

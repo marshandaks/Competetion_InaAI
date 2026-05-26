@@ -1,0 +1,17 @@
+node_modules
+.next
+out
+.env
+.env.*
+.env.local
+.env.development
+.env.production
+*.log
+npm-debug.log*
+.git
+.github
+Dockerfile
+docker-compose.yml
+Dataset-SA.csv
+sample.csv
+sample_30.csv

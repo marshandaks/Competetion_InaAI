@@ -1,0 +1,60 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "linux-musl-openssl-3.0.x"]
+}
+
+model ImportBatch {
+  id            String     @id @default(uuid())
+  fileName      String
+  importedCount Int
+  status        String     @default("Completed")
+  createdAt     DateTime   @default(now())
+
+  feedbacks     Feedback[]
+}
+
+model Feedback {
+  id              String   @id @default(uuid())
+  customerName    String
+  rating          Int
+  feedback        String
+  createdAt       DateTime @default(now())
+  
+  // AI Sentiment Fields (Populated asynchronously by BullMQ / Gemini)
+  sentiment       String?  // "positive" | "neutral" | "negative"
+  confidenceScore Float?
+  topics          String[] // Array of topics: delivery, packaging, app bug, customer service, pricing
+  summary         String?  // AI-generated summary of feedback
+
+  // Import Batch Relation
+  importBatchId   String?
+  importBatch     ImportBatch? @relation(fields: [importBatchId], references: [id], onDelete: Cascade)
+
+  // Optimistic Locking version column
+  version         Int      @default(1)
+
+  @@index([sentiment])
+  @@index([createdAt])
+}
+
+model AiInsight {
+  id          String   @id @default(uuid())
+  title       String
+  content     String
+  type        String   // "info" | "warning" | "success" | "trend"
+  createdAt   DateTime @default(now())
+}
+
+model Admin {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  password  String
+  name      String
+  createdAt DateTime @default(now())
+}
+
