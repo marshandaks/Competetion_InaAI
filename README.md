@@ -56,51 +56,111 @@
 ## 🚀 Quick Start
 
 ### Prerequisites
-- Docker & Docker Compose
-- Node.js 20+ (for local development)
+- [Docker Desktop](https://www.docker.com/products/docker-desktop/) — untuk menjalankan PostgreSQL & Redis
+- [Node.js 20+](https://nodejs.org/) — untuk development lokal
+- [Git](https://git-scm.com/)
 
-### Option 1: Docker Compose (Recommended)
+---
+
+### ⚡ Cara 1: Docker Compose (Paling Mudah)
+
+Semua service (database, redis, backend, frontend) jalan otomatis dengan 1 perintah.
 
 ```bash
-# Clone and start all services
-git clone <your-repo-url>
-cd marshanda
+# 1. Clone repo
+git clone https://github.com/marshandaks/Competetion_InaAI.git
+cd Competetion_InaAI
 
-# Start everything
+# 2. Buat file .env untuk backend
+cp backend/.env.example backend/.env
+# Lalu edit backend/.env, isi GEMINI_API_KEY dengan API key kamu
+
+# 3. Jalankan semua service
 docker compose up --build -d
 
-# Run database migrations
+# 4. Tunggu ~1 menit, lalu jalankan migrasi database
 docker compose exec backend npx prisma migrate deploy
 
-# Seed sample data
+# 5. (Opsional) Isi database dengan data contoh
 docker compose exec backend npx prisma db seed
 ```
 
-**Access:**
-- 🌐 Dashboard: http://localhost:3000
-- 🔌 API: http://localhost:4000
-- 📚 Swagger Docs: http://localhost:4000/api/docs
+**Akses aplikasi:**
+| Service | URL |
+|---------|-----|
+| 🌐 Dashboard | http://localhost:3000 |
+| 🔌 Backend API | http://localhost:4000 |
+| 📚 Swagger Docs | http://localhost:4000/api/docs |
 
-### Option 2: Local Development
+---
 
+### 💻 Cara 2: Development Lokal (Manual)
+
+Cocok jika ingin edit kode dan lihat perubahan langsung.
+
+#### Langkah 1 — Jalankan Database & Redis via Docker
 ```bash
-# 1. Start PostgreSQL and Redis
-docker compose up db redis -d
+git clone https://github.com/marshandaks/Competetion_InaAI.git
+cd Competetion_InaAI
 
-# 2. Backend
+# Jalankan hanya database & redis (tanpa backend/frontend)
+docker compose up db redis -d
+```
+
+#### Langkah 2 — Setup Backend
+```bash
 cd backend
+
+# Salin file environment
 cp .env.example .env
+# Edit .env dan isi GEMINI_API_KEY dengan API key kamu
+
+# Install dependencies
 npm install
+
+# Generate Prisma client & jalankan migrasi
 npx prisma generate
 npx prisma migrate dev
-npx prisma db seed
-npm run start:dev
 
-# 3. Frontend (new terminal)
+# (Opsional) Seed data contoh
+npx prisma db seed
+
+# Jalankan backend (mode development, auto-reload)
+npm run start:dev
+```
+Backend berjalan di: **http://localhost:4000**
+
+#### Langkah 3 — Setup Frontend (terminal baru)
+```bash
 cd frontend
+
+# Install dependencies
 npm install
+
+# Jalankan frontend
 npm run dev
 ```
+Frontend berjalan di: **http://localhost:3000**
+
+---
+
+### 🔑 Environment Variables
+
+Buat file `backend/.env` berdasarkan `backend/.env.example`:
+
+```env
+# Wajib diisi:
+GEMINI_API_KEY=your_gemini_api_key_here   # Dapatkan di https://aistudio.google.com
+
+# Sudah ada default (tidak perlu diubah jika pakai Docker):
+DATABASE_URL="postgresql://postgres:postgres@localhost:5432/sentiview?schema=public"
+REDIS_HOST=localhost
+REDIS_PORT=6379
+PORT=4000
+NODE_ENV=development
+```
+
+> **Cara dapat Gemini API Key:** Buka https://aistudio.google.com → Get API Key → Create API Key (gratis)
 
 ---
 
