@@ -39,6 +39,10 @@ COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/dist ./dist
 COPY --from=builder /app/prisma ./prisma
 
+# Script startup: migrate dulu, baru start app
+COPY --from=builder /app/node_modules/.bin/prisma ./node_modules/.bin/prisma
+RUN echo '#!/bin/sh\nnpx prisma migrate deploy\nexec node dist/src/main' > /app/start.sh && chmod +x /app/start.sh
+
 EXPOSE 4000
 
-CMD ["node", "dist/src/main"]
+CMD ["/bin/sh", "/app/start.sh"]
