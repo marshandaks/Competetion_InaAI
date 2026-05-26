@@ -39,10 +39,6 @@ COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/dist ./dist
 COPY --from=builder /app/prisma ./prisma
 
-# Script startup: migrate dulu, baru start app
-COPY start.sh /app/start.sh
-RUN chmod +x /app/start.sh
-
 EXPOSE 4000
 
-CMD ["/bin/sh", "/app/start.sh"]
+CMD ["node", "dist/src/main"]
